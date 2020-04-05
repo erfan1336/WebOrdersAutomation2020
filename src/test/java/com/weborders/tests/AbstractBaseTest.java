@@ -12,12 +12,11 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
-
 import java.io.IOException;
 
 public class AbstractBaseTest {
 
-    protected WebDriver driver = Driver.getDriver();
+    protected WebDriver driver;
 
     protected static ExtentReports extentReports;
     protected static ExtentHtmlReporter extentHtmlReporter;
@@ -52,6 +51,7 @@ public class AbstractBaseTest {
 
     @BeforeMethod
     public void setup(){
+       driver = Driver.getDriver();
        driver.get(ConfigurationReader.getProperty("url"));
        driver.manage().window().maximize();
     }
@@ -60,6 +60,7 @@ public class AbstractBaseTest {
     public void teardown(ITestResult testResult){
         if (testResult.getStatus() == ITestResult.FAILURE){
            String screenshotLocation = BrowserUtilities.getScreenshot(testResult.getName());
+
            try {
                extentTest.fail(testResult.getName());//this will specify the test name that failed
                extentTest.addScreenCaptureFromPath(screenshotLocation);//screenshot as an evidence
@@ -77,5 +78,6 @@ public class AbstractBaseTest {
 
         BrowserUtilities.wait(3);
         Driver.closeDriver();
+        driver.quit();
     }
 }
